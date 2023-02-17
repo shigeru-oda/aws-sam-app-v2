@@ -1,0 +1,74 @@
+import os
+
+import boto3
+import pytest
+import requests
+import json
+
+"""
+Make sure env variable AWS_SAM_STACK_NAME exists with the name of the stack we are going to test. 
+"""
+
+
+class TestApiGateway:
+
+    @pytest.fixture()
+    def api_gateway_url(self):
+        """ Get the API Gateway URL from Cloudformation Stack outputs """
+        stack_name = os.environ.get("AWS_SAM_STACK_NAME")
+
+        if stack_name is None:
+            raise ValueError('Please set the AWS_SAM_STACK_NAME environment variable to the name of your stack')
+
+        client = boto3.client("cloudformation")
+
+        try:
+            response = client.describe_stacks(StackName=stack_name)
+        except Exception as e:
+            raise Exception(
+                f"Cannot find stack {stack_name} \n" f'Please make sure a stack with the name "{stack_name}" exists'
+            ) from e
+
+        stacks = response["Stacks"]
+        stack_outputs = stacks[0]["Outputs"]
+        api_outputs = [output for output in stack_outputs if output["OutputKey"] == "HelloWorldApi"]
+
+        if not api_outputs:
+            raise KeyError(f"HelloWorldAPI not found in stack {stack_name}")
+
+        return api_outputs[0]["OutputValue"]  # Extract url from stack outputs
+
+    def test_root(self, api_gateway_url):
+        """ Call the API Gateway endpoint and check the response """
+        response = requests.get(api_gateway_url + "/hello")
+
+        assert response.status_code == 200
+        assert response.json() == {"message": "Hello SAM World"}
+
+    def test_read_item(self, api_gateway_url):
+        """ Call the API Gateway endpoint and check the response """
+        response = requests.get(api_gateway_url + "/item?item_id=1")
+
+        assert response.status_code == 200
+        assert response.json() == {"1": {"name": "name-0001","description":"desc-0001","price":10.0}}
+
+    def test_read_item_error(self, api_gateway_url):
+        """ Call the API Gateway endpoint and check the response """
+        response = requests.get(api_gateway_url + "/item?item_id=6")
+
+        assert response.status_code == 404
+        assert response.json() == {"detail": "Item not found"}
+
+    def test_create_item(self, api_gateway_url):
+        """ Call the API Gateway endpoint and check the response """
+        request_url = api_gateway_url + "/item/9"
+        headers = {"Content-Type" : "application/json"}
+        json_data = {"name": "name-0009","description":" desc-0009","price": 90.0}
+        response = requests.post(
+            request_url,
+            headers=headers,
+            json=json_data
+        )
+
+        assert response.status_code == 201
+        assert response.json() == {"9": {"name": "name-0009","description":"desc-0009","price":90.0}}

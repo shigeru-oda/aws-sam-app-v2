@@ -1,0 +1,9 @@
+{
+  "body": "{\"name\": \"name-0009\",\"description\":\"desc-0009\",\"price\":90.0}",
+  "resource": "/",
+  "path": "/item",
+  "httpMethod": "POST",
+  "requestContext": {
+    "Dummy": "Dummy"
+  }
+}
