@@ -14,21 +14,21 @@ def test_root():
 def test_get_item():
     response = item_client.get("/item?id=ABC")
     assert response.status_code == 200
-    assert response.json() == {"id": "ABC", "name": "read_item+ABC","description":"read_item+ABC","price":100.0}
+    assert response.json() == {"id": "ABC", "name": "get_item+ABC","description":"get_item+ABC","price":100.0}
 
 def test_post_item():
     response = item_client.post(
         "/item",
-        json={"name": "name-0009","description":"desc-0009","price":90.0}
+        json={"name": "post_item","description":"post_item","price":200.0}
     )
     del_id_res = response.json()
     del del_id_res["id"]
     assert response.status_code == 201
-    assert del_id_res =={"name": "name-0009","description":"desc-0009","price":90.0}
+    assert del_id_res =={"name": "post_item","description":"post_item","price":200.0}
 
 def test_put_item():
     response = item_client.put(
         "/item/9"
     )
     assert response.status_code == 201
-    assert response.json() =={"id": "9", "name": "update_item+9","description":"update_item+9","price":200.0}
+    assert response.json() =={"id": "9", "name": "put_item+9","description":"put_item+9","price":300.0}
