@@ -1,5 +1,5 @@
 {
-  "body": "{\"name\": \"name-0009\",\"description\":\"desc-0009\",\"price\":90.0}",
+  "body": "{\"name\": \"post_item\",\"description\":\"post_item\",\"price\":200.0}",
   "resource": "/",
   "path": "/item",
   "httpMethod": "POST",
