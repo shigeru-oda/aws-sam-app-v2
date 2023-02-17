@@ -1,7 +1,10 @@
 {
   "resource": "/",
-  "path": "/item?id=1",
+  "path": "/item",
   "httpMethod": "GET",
+  "queryStringParameters": {
+    "id": "ABC"
+  },
   "requestContext": {
     "Dummy": "Dummy"
   }
