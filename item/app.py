@@ -21,8 +21,8 @@ app = FastAPI()
 async def read_item(id: str):
   return{
     "id": str(id),
-    "name": "read_item+" + str(id),
-    "description": "read_item+" + str(id),
+    "name": "get_item+" + str(id),
+    "description": "get_item+" + str(id),
     "price": 100.0
   }
 
@@ -36,9 +36,9 @@ async def create_item(item:RequestItem):
 async def update_item(id:str):
   return{
     "id": id,
-    "name": "update_item+" + str(id),
-    "description": "update_item+" + str(id),
-    "price": 200.0
+    "name": "put_item+" + str(id),
+    "description": "put_item+" + str(id),
+    "price": 300.0
   }
 
 lambda_handler = Mangum(app)
