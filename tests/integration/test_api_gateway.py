@@ -45,30 +45,32 @@ class TestApiGateway:
         assert response.status_code == 200
         assert response.json() == {"message": "Hello SAM World"}
 
-    def test_read_item(self, api_gateway_url):
+    def test_get_item(self, api_gateway_url):
         """ Call the API Gateway endpoint and check the response """
-        response = requests.get(api_gateway_url + "/item?item_id=1")
+        response = requests.get(api_gateway_url + "/item?id=ABC")
 
         assert response.status_code == 200
-        assert response.json() == {"1": {"name": "name-0001","description":"desc-0001","price":10.0}}
+        assert response.json() == {"id":"ABC","name":"get_item+ABC","description":"get_item+ABC","price":100.0}
 
-    def test_read_item_error(self, api_gateway_url):
+    def test_post_item(self, api_gateway_url):
         """ Call the API Gateway endpoint and check the response """
-        response = requests.get(api_gateway_url + "/item?item_id=6")
-
-        assert response.status_code == 404
-        assert response.json() == {"detail": "Item not found"}
-
-    def test_create_item(self, api_gateway_url):
-        """ Call the API Gateway endpoint and check the response """
-        request_url = api_gateway_url + "/item/9"
+        request_url = api_gateway_url + "/item"
         headers = {"Content-Type" : "application/json"}
-        json_data = {"name": "name-0009","description":" desc-0009","price": 90.0}
+        json_data = {"name": "post_item","description":"post_item","price":200.0}
         response = requests.post(
             request_url,
             headers=headers,
             json=json_data
         )
+        del_id_res = response.json()
+        print(del_id_res)
+        del del_id_res["id"]
+        assert response.status_code == 201
+        assert del_id_res =={"name": "post_item","description":"post_item","price":200.0}
+
+    def test_put_item(self, api_gateway_url):
+        """ Call the API Gateway endpoint and check the response """
+        response = requests.put(api_gateway_url + "/item/9")
 
         assert response.status_code == 201
-        assert response.json() == {"9": {"name": "name-0009","description":"desc-0009","price":90.0}}
+        assert response.json() =={"id": "9", "name": "put_item+9","description":"put_item+9","price":300.0}
